@@ -3,7 +3,9 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-end">
-    <a href=" {{ route('discussions.create') }}" class="btn btn-success mb-3">
+        <a href="{{ route('discussions.index') }}" class="btn btn-secondary mb-3">View Discussions</a>
+        &nbsp;&nbsp;&nbsp;
+        <a href=" {{ route('discussions.create') }}" class="btn btn-success mb-3">
             Add Discussion
         </a>
     </div>

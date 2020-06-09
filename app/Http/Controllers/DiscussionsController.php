@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests\CreateDiscussionRequest;
 use Illuminate\Support\Str;
 use App\Discussion;
+use App\Reply;
+use App\Notifications\ReplyMarkedAsBestReply;
 
 class DiscussionsController extends Controller
 {
@@ -22,7 +24,7 @@ class DiscussionsController extends Controller
     public function index()
     {
         return view('discussions.index',[
-            'discussions' => Discussion::paginate(5)
+            'discussions' => Discussion::filterByChannels()->paginate(3)
         ]);
     }
 
@@ -124,5 +126,30 @@ class DiscussionsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    
+    public function reply(Discussion $discussion, Reply $reply)
+    {
+
+        // dd($discussion, $reply);
+        // $discussion->markAsBestReply($reply);
+        // return redirect()->back();
+
+        // $discussion->update([
+        //     'reply_id' => $reply->id
+        // ]);
+
+        Discussion::where('id', $discussion->id)->update([
+            'reply_id' => $reply->id
+        ]);
+
+        if ($reply->owner->id == $discussion->user->id) {
+            return redirect()->back();
+        }    
+
+        $reply->owner->notify(new ReplyMarkedAsBestReply($reply->discussion));
+
+        return redirect()->back();
     }
 }

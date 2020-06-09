@@ -83,4 +83,15 @@ class UserController extends Controller
     {
         //
     }
+
+    public function notifications() 
+    {
+        //mark all as read
+        // dd(auth()->user()->notifications);
+        auth()->user()->unreadNotifications->markAsRead();
+        //display all notifications
+        return view('users.notifications', [
+            'notifications' => auth()->user()->notifications()->paginate(10)
+        ]);
+    }
 }

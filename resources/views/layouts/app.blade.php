@@ -10,7 +10,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
-    <script src="{{ URL::asset('public/js/app.js') }}" defer></script>
+    {{-- <script src="{{ URL::asset('resources/js/app.js') }}" defer></script> --}}
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 
@@ -56,13 +56,26 @@
                                 </li>
                             @endif
                         @else
+                            <li class="nav-item">
+                                <a href="{{ route('user.notifications') }}" class="btn btn-primary btn-sm my-auto">
+                                    Notifications <span class="badge badge-pill badge-light">
+                                        {{ Auth::user()->unreadNotifications->count() }}
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('discussions.index') }}" class="nav-link">
+                                    Discussions
+                                </a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{ route('user.show', Auth::user()->name) }}">
+                                    {{-- <a class="dropdown-item" href="{{ route('user.show', Auth::user()->id) }}"> --}}
+                                    <a class="dropdown-item" href="">
                                         My Profile
                                     </a>
 
@@ -94,7 +107,7 @@
                       <ul class="nav flex-column">
                         @foreach ($channels as $channel)
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">
+                            <a class="nav-link active" href="{{ route('discussions.index') }}?channel={{$channel->slug}}">
                                 {{ $channel->name }}
                             </a>
                         </li>
@@ -112,24 +125,25 @@
            
         <div class="container-fluid">
             <div class="row">
-              <nav class="col-md-2 col-sm-4 d-none d-md-block bg-light sidebar">
-                <div class="sidebar-sticky">
-                <h6 class="sidebar-heading d-flex align-items-center px-3 mt-4 mb-1 text-muted font-weight-bold">
-                    <span>Channels</span>
-                </h6>
-                <hr>
-                  <ul class="nav flex-column">
-                    @foreach ($channels as $channel)
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">
-                            {{ $channel->name }}
-                        </a>
-                    </li>
-                    @endforeach
-                  </ul>
-                </div>
-              </nav>
-      
+              @if (! in_array( request()->path() , ['login', 'register' , 'password/email' , 'password/reset']))
+                <nav class="col-md-2 col-sm-4 d-none d-md-block bg-light sidebar">
+                    <div class="sidebar-sticky">
+                    <h6 class="sidebar-heading d-flex align-items-center px-3 mt-4 mb-1 text-muted font-weight-bold">
+                        <span>Channels</span>
+                    </h6>
+                    <hr>
+                    <ul class="nav flex-column">
+                        @foreach ($channels as $channel)
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ route('discussions.index') }}?channel={{$channel->slug}}">
+                                {{ $channel->name }}
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                    </div>
+                </nav>
+              @endif
               <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
                 @yield('content')
               </main>

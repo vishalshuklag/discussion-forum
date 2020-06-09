@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\UserController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -27,4 +27,8 @@ Route::post('discussions/store', 'DiscussionsController@insert')->name('discussi
 
 Route::resource('discussions/{discussion}/replies', 'RepliesController');
 
-Route::resource('user', 'UserController');
+// Route::resource('user', 'UserController');
+
+Route::get('user/notifications', [UserController::class , 'notifications'])->name('user.notifications');
+
+Route::post('discussions/{discussion}/replies/{reply}/mark-as-best-reply', 'DiscussionsController@reply')->name('discussions.best-reply');

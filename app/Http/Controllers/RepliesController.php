@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Discussion;
+use App\User;
+use App\Notifications\NewReplyAdded;
 class RepliesController extends Controller
 {
     /**
@@ -32,9 +34,26 @@ class RepliesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Discussion $discussion)
     {
-        //
+        $validatedData = $request->validate([
+            'content' => 'required'
+        ]);
+        
+        auth()->user()->replies()->create([
+            'discussion_id' =>  $discussion->id,
+            'content' => $request->content
+        ]);
+        
+        $reply = User::where('id' , auth()->user()->id)->first();
+        // dd($reply->id);
+        if ($reply->id == auth()->user()->id ) {
+            return redirect()->back();
+        }
+
+        $discussion->user->notify(New NewReplyAdded($discussion));
+        
+        return redirect()->back();
     }
 
     /**
